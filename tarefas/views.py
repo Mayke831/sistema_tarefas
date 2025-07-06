@@ -4,6 +4,17 @@ from django.contrib import messages
 from .forms import CriarUsuarioForm
 from django.contrib.auth.decorators import login_required
 from .models import Tarefa
+from rest_framework import viewsets
+from .models import Tarefa
+from .serializers import TarefaSerializer
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework import generics
+from .models import Tarefa
+from .serializers import TarefaSerializer
+
 
 
 
@@ -65,3 +76,15 @@ def excluir_tarefa(request, id):
     tarefa = Tarefa.objects.get(id=id, usuario=request.user)
     tarefa.delete()
     return redirect('lista_tarefas')
+
+class TarefaViewSet(viewsets.ModelViewSet):
+    serializer_class = TarefaSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Tarefa.objects.all()
+
+    def get_queryset(self):
+        user = self.request.user
+        return Tarefa.objects.filter(usuario=user)
+
+    def perform_create(self, serializer):
+        serializer.save(usuario=self.request.user)

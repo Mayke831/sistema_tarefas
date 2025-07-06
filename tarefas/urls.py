@@ -1,5 +1,7 @@
-from django.urls import path
+from django.urls import path, include
 from . import views
+from rest_framework.routers import DefaultRouter
+from .views import TarefaViewSet
 
 urlpatterns = [
     path('registro/', views.registro_view, name='registro'),
@@ -11,3 +13,8 @@ urlpatterns = [
     path('concluir/<int:id>/', views.concluir_tarefa, name='concluir_tarefa'),
     path('excluir/<int:id>/', views.excluir_tarefa, name='excluir_tarefa'),
 ]
+
+router = DefaultRouter()
+router.register(r'api/tarefas', TarefaViewSet, basename='tarefa')
+
+urlpatterns += router.urls
